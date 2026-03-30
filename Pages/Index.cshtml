@@ -1,10 +1,183 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">@Model.WelcomeMessage</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<body>
+    <!-- STARTMENÜ (standardmäßig sichtbar) -->
+    <div id="main-menu" class="screen active">
+        <div class="menu-container">
+            <div class="logo-circle">Q</div>
+            <h1 class="quiz-title">BrainBuster Quiz</h1>
+            <p class="menu-subtitle">Bereit für die Herausforderung?</p>
+            
+            <div class="menu-buttons">
+                <button class="menu-btn big" onclick="showScreen('create-quiz')">
+                    Quiz erstellen
+                </button>
+                <button class="menu-btn big" onclick="showScreen('create-room')">
+                    Raum erstellen
+                </button>
+                <button class="menu-btn big" onclick="showScreen('join-room')">
+                    Raum beitreten
+                </button>
+            </div>
+        </div>
+    </div>
+
+<!-- QUIZ ERSTELLEN -->
+<div id="create-quiz" class="screen">
+    <div class="quiz-container">
+        <h2>Neues Quiz erstellen</h2>
+        <input type="text" id="quiz-name" placeholder="Quiz-Name (z.B. CCNA Netzwerke)">
+        
+        <div id="questions-container">
+            <!-- Dynamische Fragen werden hier hinzugefügt -->
+        </div>
+        
+        <div class="editor-buttons">
+            <button id="add-question" class="menu-btn"> Frage hinzufügen</button>
+            <button id="save-quiz" class="menu-btn">Quiz speichern</button>
+        </div>
+        
+        <button class="menu-btn" style="width: 100%; background: #f0f0f0; color: #333;" onclick="showScreen('main-menu')">← Zurück zum Hauptmenü</button>
+    </div>
 </div>
+
+    <!-- RAUM ERSTELLEN -->
+    <div id="create-room" class="screen">
+        <div class="quiz-container">
+            <h2>Raum erstellen</h2>
+            <input type="text" id="room-name" placeholder="Raum-Name (z.B. Klasse IT4s)">
+            <select id="quiz-select">
+                <option>Quiz auswählen...</option>
+            </select>
+            <button class="menu-btn" style="width: 100%; margin-top: 12px; background: #6343e5; color: white;">Raum erstellen</button>
+            <button class="menu-btn" style="width: 100%; margin-top: 12px; background: #f0f0f0; color: #333;" onclick="showScreen('main-menu')">Zurück</button>
+        </div>
+    </div>
+
+    <!-- RAUM BEITRETEN -->
+    <div id="join-room" class="screen">
+        <div class="quiz-container">
+            <h2>Raum beitreten</h2>
+            <input type="text" id="room-code" placeholder="Raum-Code eingeben">
+            <button class="menu-btn" style="width: 100%; margin-top: 12px; background: #6343e5; color: white;">Beitreten</button>
+            <button class="menu-btn" style="width: 100%; margin-top: 12px; background: #f0f0f0; color: #333;" onclick="showScreen('main-menu')">Zurück</button>
+        </div>
+    </div>
+
+    <!-- ALTES QUIZ (als Beispiel, versteckt) -->
+    <div id="quiz-screen" class="screen">
+        <!-- Dein alter Quiz-HTML hier einfügen -->
+        <div class="quiz-container">
+            <!-- Titel, Frage, Radio-Buttons etc. -->
+        </div>
+    </div>
+
+<script>
+    // ========== MENÜ-FUNKTIONEN ==========
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    // ========== QUIZ-EDITOR (dynamisch!) ==========
+    let questionCount = 0;
+    const MAX_QUESTIONS = 20;
+    const MAX_OPTIONS = 6;
+
+    // Button "+ Frage hinzufügen" finden und aktivieren
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('add-question').addEventListener('click', addQuestion);
+        document.getElementById('save-quiz').addEventListener('click', saveQuiz);
+    });
+
+    function addQuestion() {
+        if (questionCount >= MAX_QUESTIONS) {
+            alert(`Max. ${MAX_QUESTIONS} Fragen!`);
+            return;
+        }
+
+        questionCount++;
+        const container = document.getElementById('questions-container');
+
+        // Neue Frage-Box erstellen
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question-box';
+        questionDiv.id = `q${questionCount}`;
+
+        questionDiv.innerHTML = `
+            <div class="question-header">
+                <div class="question-number">${questionCount}</div>
+                <input type="text" class="question-input" placeholder="Deine Frage hier schreiben...">
+            </div>
+            <div class="options-container" data-max="${MAX_OPTIONS}" data-count="4">
+                <div class="option-row">
+                    <input type="checkbox" class="correct-check">
+                    <input type="text" class="option-input" placeholder="Antwort A">
+                </div>
+                <div class="option-row">
+                    <input type="checkbox" class="correct-check">
+                    <input type="text" class="option-input" placeholder="Antwort B">
+                </div>
+                <div class="option-row">
+                    <input type="checkbox" class="correct-check">
+                    <input type="text" class="option-input" placeholder="Antwort C">
+                </div>
+                <div class="option-row">
+                    <input type="checkbox" class="correct-check">
+                    <input type="text" class="option-input" placeholder="Antwort D">
+                </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; gap: 8px;">
+                <button class="menu-btn btn-add-option" style="flex: 1; padding: 10px;" onclick="addOption(this)">+ Option</button>
+                <button class="menu-btn btn-delete" style="flex: 1; padding: 10px;" onclick="removeQuestion(this)">Löschen</button>
+            </div>
+        `;
+
+        container.appendChild(questionDiv);
+    }
+
+    // Funktion "+ Option" (wird von Button aufgerufen)
+    function addOption(button) {
+        const optionsContainer = button.closest('.question-box').querySelector('.options-container');
+        const currentCount = parseInt(optionsContainer.dataset.count);
+
+        if (currentCount >= MAX_OPTIONS) {
+            alert(`Max. ${MAX_OPTIONS} Optionen pro Frage!`);
+            return;
+        }
+
+        const newOption = document.createElement('div');
+        newOption.className = 'option-row';
+        newOption.innerHTML = `
+            <input type="checkbox" class="correct-check">
+            <input type="text" class="option-input" placeholder="Antwort ${String.fromCharCode(65 + currentCount)}">
+        `;
+        optionsContainer.appendChild(newOption);
+        optionsContainer.dataset.count = currentCount + 1;
+    }
+
+    // Funktion "Frage löschen"
+    function removeQuestion(button) {
+        if (confirm('Frage wirklich löschen?')) {
+            button.closest('.question-box').remove();
+            questionCount--;
+        }
+    }
+
+    // "Quiz speichern" (Demo – später C#)
+    function saveQuiz() {
+        const quizName = document.getElementById('quiz-name').value;
+        if (!quizName.trim()) {
+            alert('Quiz-Name fehlt!');
+            return;
+        }
+        alert(`"${quizName}" gespeichert! (Demo für C# Backend)`);
+        console.log('Alle Fragen:', document.querySelectorAll('.question-box'));
+    }
+</script>
+</body>
+</html>

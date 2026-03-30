@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BrainBusters_Grp11_LF08")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5deac725089ece53d79437d92c4b92c82cdfc3af")]
 [assembly: System.Reflection.AssemblyProductAttribute("BrainBusters_Grp11_LF08")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BrainBusters_Grp11_LF08")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

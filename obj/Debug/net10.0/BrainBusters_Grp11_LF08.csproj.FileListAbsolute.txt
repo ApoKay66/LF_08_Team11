@@ -137,7 +137,6 @@ C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\rjsmcshtml.dswa
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\scopedcss\Pages\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\scopedcss\bundle\BrainBusters_Grp11_LF08.styles.css
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\scopedcss\projectbundle\BrainBusters_Grp11_LF08.bundle.scp.css
-C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\t65n7xejwm-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\ibm0jqyzpr-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\ds1qzw4s8u-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\x7ot4uhcpl-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -199,8 +198,6 @@ C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\chwj
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\xcb579fl8d-{0}-muycvpuwrr-muycvpuwrr.gz
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\hhjtljcuit-{0}-87fc7y1x7t-87fc7y1x7t.gz
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\zsvzfmlg7c-{0}-mlv21k5csn-mlv21k5csn.gz
-C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\ji7eyjt6zo-{0}-wp4e9y0d1h-wp4e9y0d1h.gz
-C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\6n2leuoy51-{0}-wp4e9y0d1h-wp4e9y0d1h.gz
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\staticwebassets.development.json
@@ -212,3 +209,7 @@ C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\refint\BrainBus
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\BrainBusters_Grp11_LF08.pdb
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\BrainBusters_Grp11_LF08.genruntimeconfig.cache
 C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\ref\BrainBusters_Grp11_LF08.dll
+C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\BrainBusters_Grp11_LF08.sourcelink.json
+C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\t65n7xejwm-{0}-jvd0fhopvv-jvd0fhopvv.gz
+C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\ji7eyjt6zo-{0}-rtqsm8tcn5-rtqsm8tcn5.gz
+C:\Users\apoka\Desktop\BrainBusters_Grp11_LF08\obj\Debug\net10.0\compressed\6n2leuoy51-{0}-rtqsm8tcn5-rtqsm8tcn5.gz
