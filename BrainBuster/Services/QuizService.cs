@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using BrainBusters.Classes;    // Damit er Player, Question und Answer findet
+using BrainBusters.Classes;
 using BrainBusters.Database;
 
 class QuizService
@@ -19,55 +19,145 @@ class QuizService
 
     public void Run()
     {
-        // 1. Spieler-Setup
-        Console.Write("Wie viele Spieler nehmen teil? ");
-        if (int.TryParse(Console.ReadLine(), out int count))
+        bool keepRunning = true;
+
+        // 1. Initiales Spieler-Setup
+        ManagePlayers();
+
+        while (keepRunning)
         {
-            for (int i = 1; i <= count; i++)
+            var questions = _db.LoadQuestions();
+            var rnd = new Random();
+            var selectedQuestions = questions.OrderBy(x => rnd.Next()).Take(_rounds).ToList();
+
+            // Score für die neue Runde zurücksetzen
+            foreach (var p in _players) p.Score = 0;
+
+            // 2. Quiz-Schleife
+            foreach (var q in selectedQuestions)
             {
-                Console.Write($"Name für Spieler {i}: ");
-                string name = Console.ReadLine() ?? $"Spieler{i}";
-                _players.Add(_db.GetOrCreatePlayer(name));
-            }
-        }
+                var shuffledAnswers = q.Answers.OrderBy(x => rnd.Next()).ToList();
 
-        var questions = _db.LoadQuestions();
-        var rnd = new Random();
-        var selectedQuestions = questions.OrderBy(x => rnd.Next()).Take(_rounds).ToList();
-
-        // 2. Quiz-Schleife
-        foreach (var q in selectedQuestions)
-        {
-            foreach (var currentPlayer in _players) // Jeder Spieler bekommt die Frage
-            {
-                Console.Clear();
-                Console.WriteLine($"--- SPIELER: {currentPlayer.Name} | Aktueller Score: {currentPlayer.Score} ---");
-                Console.WriteLine($"\nKategorie: {q.Category}");
-                Console.WriteLine(q.QuestionText);
-
-                for (int i = 0; i < q.Answers.Count; i++)
-                    Console.WriteLine($"{i + 1}: {q.Answers[i].AnswerText}");
-
-                Console.Write($"{currentPlayer.Name}, deine Antwort: ");
-                if (int.TryParse(Console.ReadLine(), out int choice) && choice > 0 && choice <= q.Answers.Count)
+                foreach (var currentPlayer in _players)
                 {
-                    if (q.Answers[choice - 1].IsCorrect)
+                    Console.Clear();
+                    Console.WriteLine($"--- SPIELER: {currentPlayer.Name} | Score: {currentPlayer.Score} ---");
+                    Console.WriteLine($"\nKategorie: {q.Category}");
+                    Console.WriteLine(q.QuestionText);
+                    Console.WriteLine(new string('-', 20));
+
+                    for (int i = 0; i < shuffledAnswers.Count; i++)
                     {
+                        Console.WriteLine($"{i + 1}: {shuffledAnswers[i].AnswerText}");
+                    }
+
+                    Console.Write($"\n{currentPlayer.Name}, deine Antwort: ");
+
+                    // --- VALIDIERUNG DER ANTWORT ---
+                    int choice = 0;
+                    while (true)
+                    {
+                        string input = Console.ReadLine();
+                        if (int.TryParse(input, out choice) && choice > 0 && choice <= shuffledAnswers.Count)
+                        {
+                            break; // Gültige Zahl eingegeben
+                        }
+                        
+                        // Fehlermeldung in der Konsole nach oben schieben
+                        Console.SetCursorPosition(0, Console.CursorTop - 1);
+                        Console.Write(new string(' ', Console.WindowWidth)); // Zeile löschen
+                        Console.SetCursorPosition(0, Console.CursorTop);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write($"Ungültig! Wähle 1-{shuffledAnswers.Count}: ");
+                        Console.ResetColor();
+                    }
+
+                    if (shuffledAnswers[choice - 1].IsCorrect)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Richtig!");
                         currentPlayer.Score++;
                     }
-                    else Console.WriteLine("Falsch!");
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        var correct = shuffledAnswers.FirstOrDefault(a => a.IsCorrect);
+                        Console.WriteLine($"Falsch! Richtig war: {correct?.AnswerText}");
+                    }
+                    Console.ResetColor();
+                    Thread.Sleep(1200);
                 }
-                Thread.Sleep(1000); // Kurze Pause zum Lesen
+            }
+
+            // 3. Abschluss-Bildschirm
+            Console.Clear();
+            Console.WriteLine("=== ENDERGEBNIS ===");
+            foreach (var p in _players)
+            {
+                _db.UpdateHighScore(p);
+                Console.WriteLine($"{p.Name}: {p.Score} Punkte (Rekord: {Math.Max(p.Score, p.HighScore)})");
+            }
+
+            // 4. After-Game Menü mit eigener Validierung
+            bool validMenuInput = false;
+            while (!validMenuInput)
+            {
+                Console.WriteLine("\n---------------------------");
+                Console.WriteLine("1: Neustart | 2: Spieler verwalten | 3: Beenden");
+                Console.Write("Deine Wahl: ");
+                
+                string menuChoice = Console.ReadLine();
+
+                if (menuChoice == "1")
+                {
+                    validMenuInput = true; 
+                    // Loop startet von vorn
+                }
+                else if (menuChoice == "2")
+                {
+                    ManagePlayers();
+                    validMenuInput = true;
+                }
+                else if (menuChoice == "3")
+                {
+                    validMenuInput = true;
+                    keepRunning = false;
+                    Console.WriteLine("Programm wird beendet...");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Bitte nur 1, 2 oder 3 eingeben!");
+                    Console.ResetColor();
+                }
             }
         }
+    }
 
-        // 3. Abschluss & Highscore-Update
-        Console.WriteLine("\n=== ENDERGEBNIS ===");
-        foreach (var p in _players)
+    private void ManagePlayers()
+    {
+        Console.Clear();
+        Console.WriteLine("=== SPIELER VERWALTEN ===");
+        _players.Clear();
+        
+        int count = 0;
+        while (count <= 0)
         {
-            _db.UpdateHighScore(p);
-            Console.WriteLine($"{p.Name}: {p.Score} Punkte (Persönlicher Rekord: {Math.Max(p.Score, p.HighScore)})");
+            Console.Write("Wie viele Spieler nehmen teil? ");
+            string input = Console.ReadLine();
+            if (int.TryParse(input, out count) && count > 0)
+            {
+                for (int i = 1; i <= count; i++)
+                {
+                    Console.Write($"Name für Spieler {i}: ");
+                    string name = Console.ReadLine();
+                    _players.Add(_db.GetOrCreatePlayer(string.IsNullOrWhiteSpace(name) ? $"Spieler{i}" : name));
+                }
+            }
+            else
+            {
+                Console.WriteLine("Bitte gib eine gültige Zahl ein.");
+            }
         }
     }
 }
