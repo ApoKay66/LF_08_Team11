@@ -1,0 +1,36 @@
+## --- .NET Core / C# Spezifisch ---
+bin/
+obj/
+out/
+[Dd]ebug/
+[Rr]elease/
+*.exe
+*.dll
+*.pdb
+*.suo
+*.user
+
+## --- Visual Studio & VS Code ---
+.vs/
+.vscode/
+*.sln.docuser
+.idea/
+*.userprefs
+
+## --- Datenbanken (Wichtig für SQLite) ---
+# Wir ignorieren temporäre SQLite Dateien und lokale Datenbank-Kopien,
+# außer ihr wollt eine "Initial-Datenbank" im Repo behalten.
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Falls die Hauptdatenbank 'database.db' nur lokal gefüllt werden soll:
+# Data/*.db
+
+## --- Betriebssystem ---
+.DS_Store
+Thumbs.db
+
+## --- Test-Ergebnisse ---
+TestResults/
+*.trx

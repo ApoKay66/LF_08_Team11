@@ -1,0 +1,46 @@
+name: .NET CI/CD Pipeline
+
+# Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Check out the repository code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Set up the .NET SDK environment
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    # Restore NuGet packages
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Build the application
+    - name: Build project
+      run: dotnet build --no-restore --configuration Release
+
+    # Run automated tests
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal --configuration Release
+
+    # Publish the compiled application to a folder
+    - name: Publish artifact
+      run: dotnet publish --no-build --configuration Release --output ./publish_output
+
+    # Upload the compiled files so they can be downloaded or deployed
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: webapp-artifact
+        path: ./publish_output
