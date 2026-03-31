@@ -5,7 +5,9 @@ using System.Threading;
 using BrainBusters.Classes;
 using BrainBusters.Database;
 
-class QuizService
+namespace BrainBusters.Services;
+
+public class QuizService
 {
     private readonly QuizDatabase _db;
     private readonly int _rounds;
@@ -21,7 +23,6 @@ class QuizService
     {
         bool keepRunning = true;
 
-        // 1. Initiales Spieler-Setup
         ManagePlayers();
 
         while (keepRunning)
@@ -30,10 +31,8 @@ class QuizService
             var rnd = new Random();
             var selectedQuestions = questions.OrderBy(x => rnd.Next()).Take(_rounds).ToList();
 
-            // Score für die neue Runde zurücksetzen
             foreach (var p in _players) p.Score = 0;
 
-            // 2. Quiz-Schleife
             foreach (var q in selectedQuestions)
             {
                 var shuffledAnswers = q.Answers.OrderBy(x => rnd.Next()).ToList();
@@ -53,19 +52,17 @@ class QuizService
 
                     Console.Write($"\n{currentPlayer.Name}, deine Antwort: ");
 
-                    // --- VALIDIERUNG DER ANTWORT ---
                     int choice = 0;
                     while (true)
                     {
-                        string input = Console.ReadLine();
+                        string input = Console.ReadLine() ?? "";
                         if (int.TryParse(input, out choice) && choice > 0 && choice <= shuffledAnswers.Count)
                         {
-                            break; // Gültige Zahl eingegeben
+                            break;
                         }
                         
-                        // Fehlermeldung in der Konsole nach oben schieben
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
-                        Console.Write(new string(' ', Console.WindowWidth)); // Zeile löschen
+                        Console.Write(new string(' ', Console.WindowWidth));
                         Console.SetCursorPosition(0, Console.CursorTop);
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write($"Ungültig! Wähle 1-{shuffledAnswers.Count}: ");
@@ -89,7 +86,6 @@ class QuizService
                 }
             }
 
-            // 3. Abschluss-Bildschirm
             Console.Clear();
             Console.WriteLine("=== ENDERGEBNIS ===");
             foreach (var p in _players)
@@ -98,7 +94,6 @@ class QuizService
                 Console.WriteLine($"{p.Name}: {p.Score} Punkte (Rekord: {Math.Max(p.Score, p.HighScore)})");
             }
 
-            // 4. After-Game Menü mit eigener Validierung
             bool validMenuInput = false;
             while (!validMenuInput)
             {
@@ -106,12 +101,11 @@ class QuizService
                 Console.WriteLine("1: Neustart | 2: Spieler verwalten | 3: Beenden");
                 Console.Write("Deine Wahl: ");
                 
-                string menuChoice = Console.ReadLine();
+                string menuChoice = Console.ReadLine() ?? "";
 
                 if (menuChoice == "1")
                 {
                     validMenuInput = true; 
-                    // Loop startet von vorn
                 }
                 else if (menuChoice == "2")
                 {
@@ -144,13 +138,13 @@ class QuizService
         while (count <= 0)
         {
             Console.Write("Wie viele Spieler nehmen teil? ");
-            string input = Console.ReadLine();
+            string input = Console.ReadLine() ?? "";
             if (int.TryParse(input, out count) && count > 0)
             {
                 for (int i = 1; i <= count; i++)
                 {
                     Console.Write($"Name für Spieler {i}: ");
-                    string name = Console.ReadLine();
+                    string name = Console.ReadLine() ?? "";
                     _players.Add(_db.GetOrCreatePlayer(string.IsNullOrWhiteSpace(name) ? $"Spieler{i}" : name));
                 }
             }

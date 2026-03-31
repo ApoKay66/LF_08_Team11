@@ -1,6 +1,6 @@
 namespace BrainBusters.Classes;
 
-class Answer
+public class Answer
 {
     public int Id { get; set; }
     public int QuestionId { get; set; }

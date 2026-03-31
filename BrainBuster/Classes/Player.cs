@@ -1,6 +1,6 @@
 namespace BrainBusters.Classes;
 
-class Player
+public class Player
 {
     public int Id { get; set; } // Primärschlüssel aus der DB
     public string Name { get; set; } = "Gast";

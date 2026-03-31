@@ -8,7 +8,7 @@ class Program
     static void Main(string[] args)
     {
         bool startServer = false;
-        int rounds = 5; // Standardwert für Offline-Modus
+        int rounds = 5;
 
         for (int i = 0; i < args.Length; i++)
         {
@@ -21,11 +21,10 @@ class Program
                     startServer = true;
                     break;
                 case "-r":
-                    // Prüfen, ob ein Wert folgt
                     if (i + 1 < args.Length && int.TryParse(args[i + 1], out int parsedRounds) && parsedRounds > 0)
                     {
                         rounds = parsedRounds;
-                        i++; // Wert überspringen
+                        i++;
                     }
                     else
                     {
@@ -47,8 +46,9 @@ class Program
         }
         else
         {
-            var db = new QuizDatabase(AppConfig.DbPath);
-            var quiz = new QuizService(db, rounds); // Rundenzahl übergeben
+            // Das 'using' stellt sicher, dass db.Dispose() aufgerufen wird
+            using var db = new QuizDatabase(AppConfig.DbPath);
+            var quiz = new QuizService(db, rounds);
             quiz.Run();
         }
     }
