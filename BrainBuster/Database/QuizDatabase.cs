@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 using BrainBusters.Classes;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System;
 
@@ -14,11 +15,8 @@ public class QuizDatabase : IDisposable
     public QuizDatabase(string dbPath)
     {
         _dbPath = dbPath;
-        
-        // Verbindung einmalig erstellen und öffnen
         _connection = new SqliteConnection($"Data Source={_dbPath}");
         _connection.Open();
-        
         InitializeDatabase();
     }
 
@@ -34,30 +32,57 @@ public class QuizDatabase : IDisposable
         cmd.ExecuteNonQuery();
     }
 
-    public List<Question> LoadQuestions()
+    public List<string> GetCategories()
     {
-        var questions = new List<Question>();
-        
-        // Debug-Infos
-        Console.WriteLine($"DB Path: {_dbPath}");
-        Console.WriteLine(File.Exists(_dbPath) ? "✅ File exists" : "❌ File NOT found");
-
-        // 1. Fragen laden
+        var categories = new List<string>();
         var cmd = _connection.CreateCommand();
-        cmd.CommandText = "SELECT Id, Category, QuestionText FROM Questions";
+        cmd.CommandText = "SELECT DISTINCT Category FROM Questions";
+        
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {
-            questions.Add(new Question
-            {
-                Id = reader.GetInt32(0),
-                Category = reader.GetString(1),
-                QuestionText = reader.GetString(2)
-            });
+            categories.Add(reader.GetString(0));
         }
-        reader.Close();
+        return categories;
+    }
 
-        // 2. Antworten für jede Frage laden
+    // Now accepts a list of categories
+    public List<Question> LoadQuestions(List<string>? categoryFilters = null)
+    {
+        var questions = new List<Question>();
+        var cmd = _connection.CreateCommand();
+
+        if (categoryFilters == null || categoryFilters.Count == 0)
+        {
+            cmd.CommandText = "SELECT Id, Category, QuestionText FROM Questions";
+        }
+        else
+        {
+            // Build parameters for the IN clause: WHERE Category IN (@cat0, @cat1, ...)
+            var parameterNames = categoryFilters.Select((_, i) => $"@cat{i}").ToList();
+            string inClause = string.Join(", ", parameterNames);
+            
+            cmd.CommandText = $"SELECT Id, Category, QuestionText FROM Questions WHERE Category IN ({inClause})";
+            
+            for (int i = 0; i < categoryFilters.Count; i++)
+            {
+                cmd.Parameters.AddWithValue(parameterNames[i], categoryFilters[i]);
+            }
+        }
+
+        using (var reader = cmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                questions.Add(new Question
+                {
+                    Id = reader.GetInt32(0),
+                    Category = reader.GetString(1),
+                    QuestionText = reader.GetString(2)
+                });
+            }
+        }
+
         foreach (var q in questions)
         {
             var ansCmd = _connection.CreateCommand();
@@ -90,12 +115,7 @@ public class QuizDatabase : IDisposable
         {
             if (reader.Read())
             {
-                return new Player
-                {
-                    Id = reader.GetInt32(0),
-                    Name = reader.GetString(1),
-                    HighScore = reader.GetInt32(2)
-                };
+                return new Player { Id = reader.GetInt32(0), Name = reader.GetString(1), HighScore = reader.GetInt32(2) };
             }
         }
 
@@ -110,23 +130,17 @@ public class QuizDatabase : IDisposable
     public void UpdateHighScore(Player player)
     {
         if (player.Score <= player.HighScore) return;
-        
         var cmd = _connection.CreateCommand();
         cmd.CommandText = "UPDATE Accounts SET HighScore = @score WHERE Id = @id";
         cmd.Parameters.AddWithValue("@score", player.Score);
         cmd.Parameters.AddWithValue("@id", player.Id);
-        
         cmd.ExecuteNonQuery();
         player.HighScore = player.Score;
     }
 
-    // Methode zum sauberen Schließen der Verbindung
     public void Dispose()
     {
-        if (_connection != null)
-        {
-            _connection.Close();
-            _connection.Dispose();
-        }
+        _connection?.Close();
+        _connection?.Dispose();
     }
 }
