@@ -7,8 +7,28 @@ class Program
 {
     static void Main(string[] args)
     {
-        bool startServer = false;
-        int rounds = 5;
+        using var db = new QuizDatabase(AppConfig.DbPath);
+        QuizService Quiz = new QuizService(db, 5);
+
+        if (!TryParseArguments(args, out var config)) return;
+
+        if (config.StartServer)
+        {
+            new WebServerService().Start();
+        }
+        if (config.ShowLeaderboard)
+        {
+            Quiz.ShowLeaderboard();
+        }
+        if (!config.ShowLeaderboard && !config.StartServer)
+        {
+            Quiz.Run();
+        }
+    }
+
+    static bool TryParseArguments(string[] args, out (bool StartServer, bool ShowLeaderboard, int Rounds) config)
+    {
+        config = (false, false, 5);
 
         for (int i = 0; i < args.Length; i++)
         {
@@ -16,43 +36,25 @@ class Program
             {
                 case "-h":
                     ShowHelp();
-                    return;
+                    return false;
                 case "-s":
-                    startServer = true;
+                    config.StartServer = true;
                     break;
-                case "-r":
-                    if (i + 1 < args.Length && int.TryParse(args[i + 1], out int parsedRounds) && parsedRounds > 0)
-                    {
-                        rounds = parsedRounds;
-                        i++;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Ungültiger Wert für -r. Bitte eine positive Zahl angeben.");
-                        return;
-                    }
+                case "-r" when i + 1 < args.Length && int.TryParse(args[i + 1], out int r) && r > 0:
+                    config.Rounds = r;
+                    i++;
+                    break;
+                case "-lb":
+                    //TODO:Show Leaderboard
+                    config.ShowLeaderboard = true;
                     break;
                 default:
-                    Console.WriteLine($"Unbekanntes Argument: {args[i]}");
-                    ShowHelp();
-                    return;
+                    Console.WriteLine($"Fehler: Unbekanntes Argument {args[i]}");
+                    return false;
             }
         }
-
-        if (startServer)
-        {
-            var webServer = new WebServerService();
-            webServer.Start();
-        }
-        else
-        {
-            // Das 'using' stellt sicher, dass db.Dispose() aufgerufen wird
-            using var db = new QuizDatabase(AppConfig.DbPath);
-            var quiz = new QuizService(db, rounds);
-            quiz.Run();
-        }
+        return true;
     }
-
     static void ShowHelp()
     {
         Console.WriteLine("=== BrainBusters CLI Quiz ===");
