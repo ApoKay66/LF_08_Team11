@@ -22,6 +22,21 @@ public class QuizDatabase : IDisposable
         InitializeDatabase();
     }
 
+        public List<string> GetCategories()
+    {
+        var categories = new List<string>();
+        var cmd = _connection.CreateCommand();
+        cmd.CommandText = "SELECT DISTINCT Category FROM Questions";
+        
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            categories.Add(reader.GetString(0));
+        }
+        return categories;
+    }
+
+    // The Initial Database consists of only the Questions and Answers
     private void InitializeDatabase()
     {
         var cmd = _connection.CreateCommand();
@@ -34,51 +49,72 @@ public class QuizDatabase : IDisposable
         cmd.ExecuteNonQuery();
     }
 
-    public List<Question> LoadQuestions()
-    {
-        var questions = new List<Question>();
-        
-        // Debug-Infos
-        Console.WriteLine($"DB Path: {_dbPath}");
-        Console.WriteLine(File.Exists(_dbPath) ? "✅ File exists" : "❌ File NOT found");
+public List<Question> LoadQuestions(List<string>? categoryFilters = null)
+{
+    var questions = new Dictionary<int, Question>();
 
-        // 1. Fragen laden
-        var cmd = _connection.CreateCommand();
-        cmd.CommandText = "SELECT Id, Category, QuestionText FROM Questions";
-        using var reader = cmd.ExecuteReader();
-        while (reader.Read())
+    var cmd = _connection.CreateCommand();
+            if (categoryFilters == null || categoryFilters.Count == 0)
         {
-            questions.Add(new Question
-            {
-                Id = reader.GetInt32(0),
-                Category = reader.GetString(1),
-                QuestionText = reader.GetString(2)
-            });
+            cmd.CommandText = @"
+                SELECT q.Id, q.Category, q.QuestionText,
+                        a.Id, a.AnswerText, a.IsCorrect
+                FROM Questions q
+                LEFT JOIN Answers a ON q.Id = a.QuestionId
+                ORDER BY q.Id;
+            ";
         }
-        reader.Close();
-
-        // 2. Antworten für jede Frage laden
-        foreach (var q in questions)
+        else
         {
-            var ansCmd = _connection.CreateCommand();
-            ansCmd.CommandText = "SELECT Id, AnswerText, IsCorrect FROM Answers WHERE QuestionId=@qid";
-            ansCmd.Parameters.AddWithValue("@qid", q.Id);
-
-            using var ansReader = ansCmd.ExecuteReader();
-            while (ansReader.Read())
+            // Build parameters for the IN clause: WHERE Category IN (@cat0, @cat1, ...)
+            var parameterNames = categoryFilters.Select((_, i) => $"@cat{i}").ToList();
+            string inClause = string.Join(", ", parameterNames);
+            
+            cmd.CommandText = 
+                $"SELECT q.Id, q.Category, q.QuestionText, a.Id, a.AnswerText, a.IsCorrect FROM Questions q LEFT JOIN Answers a ON q.Id = a.QuestionId WHERE Category IN ({inClause})";
+            
+            for (int i = 0; i < categoryFilters.Count; i++)
             {
-                q.Answers.Add(new Answer
-                {
-                    Id = ansReader.GetInt32(0),
-                    QuestionId = q.Id,
-                    AnswerText = ansReader.GetString(1),
-                    IsCorrect = ansReader.GetInt32(2) == 1
-                });
+                cmd.Parameters.AddWithValue(parameterNames[i], categoryFilters[i]);
             }
         }
 
-        return questions;
+    using var reader = cmd.ExecuteReader();
+
+    while (reader.Read())
+    {
+        int questionId = reader.GetInt32(0);
+        // Check if the Dictionary already has a Question for that ID, if so we skip this one
+        if (!questions.TryGetValue(questionId, out var question))
+        {
+            question = new Question
+            {
+                Id = questionId,
+                Category = reader.GetString(1),
+                QuestionText = reader.GetString(2),
+                Answers = new List<Answer>()
+            };
+
+            questions.Add(questionId, question);
+        }
+
+        // Answers will now be added to the Questions list of Answers, that is if the Question has any Answers in the Database...
+        if (!reader.IsDBNull(3))
+        {
+            var answer = new Answer
+            {
+                Id = reader.GetInt32(3),
+                QuestionId = questionId,
+                AnswerText = reader.GetString(4),
+                IsCorrect = reader.GetInt32(5) == 1
+            };
+
+            question.Answers.Add(answer);
+        }
     }
+
+    return new List<Question>(questions.Values);
+}
 
     public Player GetOrCreatePlayer(string name)
     {
@@ -120,7 +156,35 @@ public class QuizDatabase : IDisposable
         player.HighScore = player.Score;
     }
 
-    // Methode zum sauberen Schließen der Verbindung
+    public List<Player> GetTopPlayers(int limit)
+{
+    var players = new List<Player>();
+
+    var cmd = _connection.CreateCommand();
+    cmd.CommandText = @"
+        SELECT Id, Name, HighScore
+        FROM Accounts
+        ORDER BY HighScore DESC, Name ASC
+        LIMIT @limit;
+    ";
+
+    cmd.Parameters.AddWithValue("@limit", limit);
+
+    using var reader = cmd.ExecuteReader();
+
+    while (reader.Read())
+    {
+        players.Add(new Player
+        {
+            Id = reader.GetInt32(0),
+            Name = reader.GetString(1),
+            HighScore = reader.GetInt32(2)
+        });
+    }
+
+    return players;
+}
+
     public void Dispose()
     {
         if (_connection != null)
