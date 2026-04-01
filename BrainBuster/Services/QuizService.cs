@@ -94,6 +94,9 @@ public class QuizService
                 Console.WriteLine($"{p.Name}: {p.Score} Punkte (Rekord: {Math.Max(p.Score, p.HighScore)})");
             }
 
+            ShowLeaderboard();
+            
+
             bool validMenuInput = false;
             while (!validMenuInput)
             {
@@ -154,4 +157,25 @@ public class QuizService
             }
         }
     }
+
+    private void ShowLeaderboard()
+{
+    var leaderboard = _db.GetTopPlayers(10);
+
+    Console.WriteLine();
+    Console.WriteLine("=== GLOBALE RANGLISTE ===");
+
+    if (leaderboard.Count == 0)
+    {
+        Console.WriteLine("Noch keine Einträge vorhanden.");
+        return;
+    }
+
+    for (int i = 0; i < leaderboard.Count; i++)
+    {
+        var player = leaderboard[i];
+        Console.WriteLine($"{i + 1}. {player.Name} - {player.HighScore} Punkte");
+    }
+}
+
 }

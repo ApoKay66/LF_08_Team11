@@ -120,6 +120,35 @@ public class QuizDatabase : IDisposable
         player.HighScore = player.Score;
     }
 
+    public List<Player> GetTopPlayers(int limit)
+{
+    var players = new List<Player>();
+
+    var cmd = _connection.CreateCommand();
+    cmd.CommandText = @"
+        SELECT Id, Name, HighScore
+        FROM Accounts
+        ORDER BY HighScore DESC, Name ASC
+        LIMIT @limit;
+    ";
+
+    cmd.Parameters.AddWithValue("@limit", limit);
+
+    using var reader = cmd.ExecuteReader();
+
+    while (reader.Read())
+    {
+        players.Add(new Player
+        {
+            Id = reader.GetInt32(0),
+            Name = reader.GetString(1),
+            HighScore = reader.GetInt32(2)
+        });
+    }
+
+    return players;
+}
+
     // Methode zum sauberen Schließen der Verbindung
     public void Dispose()
     {
