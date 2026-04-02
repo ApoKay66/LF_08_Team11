@@ -1,4 +1,5 @@
 namespace BrainBusters.Core;
+
 using BrainBusters.Models;
 
 public class GameSession
@@ -14,7 +15,7 @@ public class GameSession
         _players = players;
         _questions = questions;
         _roundsTotal = roundsTotal;
-        
+
         foreach (var player in _players) player.Score = 0;
     }
 
@@ -25,7 +26,7 @@ public class GameSession
     public Question? GetNextQuestion()
     {
         if (_questions.Count == 0) return null;
-        
+
         var q = _questions[0];
         _questions.RemoveAt(0); // Frage aus dem Pool nehmen
         return q;

@@ -33,6 +33,6 @@ public class ConsoleService
         Thread.Sleep(1000);
         Console.Clear();
     }
-    
+
     public void ClearScreen() => Console.Clear();
 }

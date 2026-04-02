@@ -1,5 +1,5 @@
-﻿using BrainBusters.Models;
 using BrainBusters.DataAccess;
+using BrainBusters.Models;
 
 namespace BrainBuster.Tests;
 
@@ -11,9 +11,9 @@ public class IntegrationTests
         // ARRANGE
         // Wir übergeben nur den Namen. Der Konstruktor in QuizDatabase
         // macht daraus: "Data Source=:memory:"
-        string dbPath = ":memory:"; 
+        string dbPath = ":memory:";
         using var db = new QuizDatabase(dbPath);
-        
+
         string testName = "ChefSascha";
 
         // ACT

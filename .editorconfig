@@ -1,0 +1,71 @@
+# Globale Einstellungen
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.cs]
+# Organisiere Using-Direktiven (Alphabetisch, System zuerst)
+dotnet_separate_import_directive_groups = Microsoft,System:true
+dotnet_sort_system_usings_first = true
+
+# Style-Regeln
+dotnet_style_qualification_for_field = false:silent
+dotnet_style_qualification_for_property = false:silent
+dotnet_style_qualification_for_method = false:silent
+dotnet_style_qualification_for_event = false:silent
+
+# Spracheinstellungen (Modernes C# bevorzugen)
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_expression_bodied_methods = true:silent
+csharp_style_expression_bodied_constructors = false:silent
+
+# Namenskonventionen (Wichtig für Clean Code)
+# Klassen, Methoden, Properties -> PascalCase
+dotnet_naming_rule.types_and_methods_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.types_and_methods_should_be_pascal_case.symbols = types_and_methods
+dotnet_naming_rule.types_and_methods_should_be_pascal_case.style = pascal_case_style
+
+dotnet_naming_symbols.types_and_methods.applicable_kinds = class, struct, interface, enum, method, property, event
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# Private Felder -> _camelCase
+dotnet_naming_rule.private_fields_should_be_underscored.severity = suggestion
+dotnet_naming_rule.private_fields_should_be_underscored.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_underscored.style = underscored_style
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.underscored_style.capitalization = camel_case
+dotnet_naming_style.underscored_style.required_prefix = _
+
+# Formatierung (Klammern etc.)
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# So sollte der Code aussehen, wenn er formatiert wird:
+# public class MyClass
+# {
+#     private int _myField;
+#
+#     public void MyMethod()
+#     {
+#         if (true)
+#         {
+#             // ...
+#         }
+#         else
+#         {
+#             // ...
+#         }
+#     }
+# }
+
+# Wenn du wissen möchtest, was angepasst wurde, check einfach die Changes in GitHub oder die Commits. Dort siehst du genau, welche Zeilen geändert wurden. Alle Änderungen sind in den letzten Commits dokumentiert.

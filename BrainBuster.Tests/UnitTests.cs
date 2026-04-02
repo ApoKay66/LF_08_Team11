@@ -1,5 +1,5 @@
-using BrainBusters.Models;
 using BrainBusters.Core;
+using BrainBusters.Models;
 
 namespace BrainBuster.Tests;
 

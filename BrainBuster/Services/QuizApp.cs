@@ -1,7 +1,7 @@
-using BrainBusters.Models;
-using BrainBusters.DataAccess;
-using BrainBusters.UI;
 using BrainBusters.Core;
+using BrainBusters.DataAccess;
+using BrainBusters.Models;
+using BrainBusters.UI;
 
 namespace BrainBusters.Services;
 
@@ -11,7 +11,7 @@ public class QuizApp
     private readonly ConsoleService _ui;
     private List<Player> _activePlayers = new();
     private readonly int _roundsPerGame;
-    private readonly int _maxPlayers = 4; 
+    private readonly int _maxPlayers = 4;
 
     public QuizApp(QuizDatabase db, int rounds = 1)
     {
@@ -27,7 +27,7 @@ public class QuizApp
             _ui.ClearScreen();
             _ui.ShowMessage("====== HAUPTMENÜ ======");
             int input = _ui.PromptNumber("1: Spiel Starten | 2: Spieler verwalten | 3: Leaderboard | 4: Beenden", 1, 4);
-            
+
             switch (input)
             {
                 case 1: StartNewGame(); break;
@@ -50,7 +50,7 @@ public class QuizApp
         var questions = _db.LoadQuestions(null); // Kategorien übergeben
         Shuffle(questions);
         // Mischen der Fragen...
-        
+
         var session = new GameSession(_activePlayers, questions, _roundsPerGame);
 
         // Die Game-Loop
@@ -64,10 +64,10 @@ public class QuizApp
             // UI Logik für den Zug
             _ui.ClearScreen();
             _ui.ShowMessage($"[{player.Name} ist am Zug]");
-            
+
             // Antworten mischen und aufbereiten (Logik aus deinem alten Code)
             var answers = PrepareAnswers(question);
-            
+
             for (int i = 0; i < answers.Count; i++)
             {
                 _ui.ShowMessage($"{i + 1}: {answers[i].AnswerText}");
@@ -117,7 +117,7 @@ public class QuizApp
         _ui.ShowMessage($"Besten {topPlayers.Count} Spieler:");
         for (int i = 0; i < topPlayers.Count; i++)
         {
-            _ui.ShowMessage($"{i+1}. {topPlayers[i].Name} - {topPlayers[i].HighScore} Punkte ");
+            _ui.ShowMessage($"{i + 1}. {topPlayers[i].Name} - {topPlayers[i].HighScore} Punkte ");
         }
         string input = string.Empty;
         while (input != "q")
@@ -132,7 +132,7 @@ public class QuizApp
         var tmp = _activePlayers.OrderByDescending(x => x.Score).ToList();
         for (int i = 0; i < tmp.Count; i++)
         {
-            _ui.ShowMessage($"{i+1}. {tmp[i].Name} - {tmp[i].Score} Punkte");
+            _ui.ShowMessage($"{i + 1}. {tmp[i].Name} - {tmp[i].Score} Punkte");
         }
         _ui.ShowMessage("======================");
         string input = string.Empty;
