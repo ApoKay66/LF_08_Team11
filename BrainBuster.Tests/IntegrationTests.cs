@@ -1,11 +1,9 @@
 ﻿using BrainBusters.Models;
 using BrainBusters.DataAccess;
-using Xunit;
-using System;
 
 namespace BrainBuster.Tests;
 
-public class UnitTest1
+public class IntegrationTests
 {
     [Fact]
     public void CreatePlayer_ShouldSaveAndRetrieveCorrectPlayerFromDatabase()
