@@ -9,6 +9,7 @@ public class Player
 
     public void AddScore(int score)
     {
+        if (score < 0) return;
         Score += score;
     }
 }
