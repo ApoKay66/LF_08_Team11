@@ -1,5 +1,5 @@
-﻿using BrainBusters.Classes;
-using BrainBusters.Database;
+﻿using BrainBusters.Models;
+using BrainBusters.DataAccess;
 using Xunit;
 using System;
 

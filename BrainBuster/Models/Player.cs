@@ -1,4 +1,4 @@
-namespace BrainBusters.Classes;
+namespace BrainBusters.Models;
 
 public class Player
 {
@@ -6,4 +6,9 @@ public class Player
     public string Name { get; set; } = "Gast";
     public int Score { get; set; } = 0;      // Aktueller Score der Runde
     public int HighScore { get; set; } = 0;  // Bestwert aus der DB
+
+    public void AddScore(int score)
+    {
+        Score += score;
+    }
 }

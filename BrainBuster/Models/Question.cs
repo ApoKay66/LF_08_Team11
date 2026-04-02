@@ -1,4 +1,4 @@
-namespace BrainBusters.Classes;
+namespace BrainBusters.Models;
 
 public class Question
 {

@@ -1,10 +1,7 @@
 using Microsoft.Data.Sqlite;
-using BrainBusters.Classes;
-using System.Collections.Generic;
-using System.IO;
-using System;
+using BrainBusters.Models;
 
-namespace BrainBusters.Database;
+namespace BrainBusters.DataAccess;
 
 public class QuizDatabase : IDisposable
 {
