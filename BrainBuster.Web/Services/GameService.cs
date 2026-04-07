@@ -38,11 +38,25 @@ public class GameService
     {
         var players = playerNames.Select(name => _db.GetOrCreatePlayer(name)).ToList();
         var categoryList = category == null ? null : new List<string> { category };
-        var questions = _db.LoadQuestions(categoryList);
-        Shuffle(questions);
         
-        var limitedQuestions = questions.Take(rounds * players.Count).ToList();
-        var session = new GameSession(players, limitedQuestions);
+        // 1. Load the unique set of questions
+        var uniqueQuestions = _db.LoadQuestions(categoryList);
+        
+        // 2. Shuffle them to create a random order for this game
+        Shuffle(uniqueQuestions);
+
+        // 3. Create the full list, repeating each question for each player before moving to the next
+        var gameQuestions = new List<Question>();
+        foreach (var question in uniqueQuestions)
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                gameQuestions.Add(question);
+            }
+        }
+        
+        // 4. Create the session with the expanded list
+        var session = new GameSession(players, gameQuestions);
         _session.Set(GameSessionKey, session);
     }
 
