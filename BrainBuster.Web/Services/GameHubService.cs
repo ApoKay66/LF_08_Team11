@@ -29,22 +29,9 @@ public class GameHubService
             var uniqueQuestions = _db.LoadQuestions(categories.Count > 0 ? categories : null);
             Console.WriteLine($"[GameHubService] Loaded {uniqueQuestions.Count} unique questions from DB.");
 
-            // 2. Shuffle them to create a random order for this game
-            Shuffle(uniqueQuestions);
-
-            // 3. Create the full list, repeating each question for each player before moving to the next
-            var gameQuestions = new List<Question>();
-            foreach (var question in uniqueQuestions)
-            {
-                for (int i = 0; i < players.Count; i++)
-                {
-                    gameQuestions.Add(question);
-                }
-            }
-            Console.WriteLine($"[GameHubService] Created a game with {gameQuestions.Count} total questions for {players.Count} players.");
-            
-            // 4. Create the session with the expanded list
-            _gameSession = new GameSession(players, gameQuestions);
+            // 2. Create the session, GameSession now handles individual player queues and shuffling
+            _gameSession = new GameSession(players, uniqueQuestions);
+            Console.WriteLine($"[GameHubService] Created a game with {uniqueQuestions.Count} unique questions for {players.Count} players.");
             
             // Prepare the very first turn
             _activeTurn = CreateTurnViewModel(_gameSession);
