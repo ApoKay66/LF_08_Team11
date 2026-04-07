@@ -96,7 +96,8 @@ const UI = {
                 </tbody>
             </table>
             <div class="text-center mt-4">
-                <button id="play-again-btn" class="btn btn-primary">Nochmal spielen</button>
+                <button id="play-again-btn" class="btn btn-primary me-2">Nochmal spielen</button>
+                <button id="manage-players-btn" class="btn btn-secondary">Spieler verwalten</button>
             </div>
         `;
     }

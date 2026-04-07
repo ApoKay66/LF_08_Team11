@@ -84,8 +84,8 @@ const App = {
 
         // --- Step 3: Category Selection & Game Start ---
         if (target.id === 'start-game-btn') {
-            const selectedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-            await API.startGame(this.setupState.playerNames, selectedCategories);
+            this.setupState.categories = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+            await API.startGame(this.setupState.playerNames, this.setupState.categories);
         }
         
         // --- In-Game: Answering ---
@@ -96,7 +96,11 @@ const App = {
 
         // --- Summary: Play Again ---
         if (target.id === 'play-again-btn') {
-            await API.resetGame();
+            // Restart game with the same players and categories
+            await API.startGame(this.setupState.playerNames, this.setupState.categories);
+        } else if (target.id === 'manage-players-btn') {
+            // Allow managing players and categories
+            this.appElement.innerHTML = UI.renderPlayerCount();
         }
     }
 };
