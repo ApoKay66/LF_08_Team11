@@ -24,20 +24,26 @@ public class GameHubService
         lock (_lock)
         {
             var players = playerNames.Select(name => _db.GetOrCreatePlayer(name)).ToList();
-            var questions = _db.LoadQuestions(categories.Count > 0 ? categories : null);
-            Shuffle(questions);
-
-            Console.WriteLine($"[GameHubService] Loaded {questions.Count} questions from DB.");
-
-            var questionsPerPlayer = 5;
-            var requiredQuestions = players.Count * questionsPerPlayer;
             
-            Console.WriteLine($"[GameHubService] Required questions for {players.Count} players ({questionsPerPlayer} each): {requiredQuestions}");
+            // 1. Load the unique set of questions
+            var uniqueQuestions = _db.LoadQuestions(categories.Count > 0 ? categories : null);
+            Console.WriteLine($"[GameHubService] Loaded {uniqueQuestions.Count} unique questions from DB.");
 
-            var gameQuestions = questions.Take(requiredQuestions).ToList();
+            // 2. Shuffle them to create a random order for this game
+            Shuffle(uniqueQuestions);
+
+            // 3. Create the full list, repeating each question for each player before moving to the next
+            var gameQuestions = new List<Question>();
+            foreach (var question in uniqueQuestions)
+            {
+                for (int i = 0; i < players.Count; i++)
+                {
+                    gameQuestions.Add(question);
+                }
+            }
+            Console.WriteLine($"[GameHubService] Created a game with {gameQuestions.Count} total questions for {players.Count} players.");
             
-            Console.WriteLine($"[GameHubService] Actual questions for game session: {gameQuestions.Count}");
-
+            // 4. Create the session with the expanded list
             _gameSession = new GameSession(players, gameQuestions);
             
             // Prepare the very first turn
@@ -138,7 +144,7 @@ public class GameHubService
 
     private static void Shuffle<T>(IList<T> list)
     {
-        var rng = Random.Shared;
+        var rng = new Random();
         for (int i = list.Count - 1; i > 0; i--)
         {
             int j = rng.Next(i + 1);
