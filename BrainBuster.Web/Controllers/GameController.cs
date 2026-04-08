@@ -1,6 +1,7 @@
 using BrainBuster.Web.Hubs;
 using BrainBuster.Web.Services;
 using BrainBuster.Web.Models;
+using BrainBusters.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -29,6 +30,12 @@ public class GameController : ControllerBase
     public ActionResult<List<string>> GetCategories()
     {
         return Ok(_gameService.GetCategories());
+    }
+
+    [HttpGet("highscores")]
+    public ActionResult<List<Player>> GetHighscores()
+    {
+        return Ok(_gameService.GetGlobalHighscores());
     }
 
     [HttpPost("start")]

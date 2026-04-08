@@ -19,6 +19,11 @@ public class GameHubService
     
     public List<string> GetCategories() => _db.GetCategories();
 
+    public List<Player> GetGlobalHighscores(int limit = 10)
+    {
+        return _db.GetTopPlayers(limit);
+    }
+
     public void StartNewGame(List<string> playerNames, List<string> categories)
     {
         lock (_lock)

@@ -100,5 +100,32 @@ const UI = {
                 <button id="manage-players-btn" class="btn btn-secondary">Spieler verwalten</button>
             </div>
         `;
+    },
+
+    renderGlobalHighscores(highscores) {
+        if (!highscores || highscores.length === 0) {
+            return '<p class="text-center">Noch keine Einträge vorhanden.</p>';
+        }
+
+        return `
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Bestleistung (Punkte)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${highscores.map((p, index) => `
+                        <tr>
+                            <th scope="row">${index + 1}</th>
+                            <td>${p.name}</td>
+                            <td>${p.highScore}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
     }
 };

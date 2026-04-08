@@ -14,6 +14,25 @@ const App = {
     init() {
         this.setupSignalR();
         this.appElement.addEventListener('click', this.handleAppClick.bind(this));
+        
+        // Listener for the global scores button (outside of the main app container)
+        document.getElementById('global-scores-btn').addEventListener('click', this.showGlobalHighscores.bind(this));
+    },
+
+    async showGlobalHighscores() {
+        const modalBody = document.getElementById('highscore-modal-body');
+        modalBody.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
+        
+        const modal = new bootstrap.Modal(document.getElementById('highscoreModal'));
+        modal.show();
+
+        try {
+            const highscores = await API.getHighscores();
+            modalBody.innerHTML = UI.renderGlobalHighscores(highscores);
+        } catch (error) {
+            console.error("Error fetching highscores:", error);
+            modalBody.innerHTML = '<div class="alert alert-danger">Fehler beim Laden der Rangliste.</div>';
+        }
     },
 
     setupSignalR() {

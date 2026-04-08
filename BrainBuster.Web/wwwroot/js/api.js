@@ -12,6 +12,11 @@ const API = {
         return response.json();
     },
 
+    async getHighscores() {
+        const response = await fetch('/api/game/highscores');
+        return response.json();
+    },
+
     async startGame(playerNames, categories) {
         await fetch('/api/game/start', {
             method: 'POST',
