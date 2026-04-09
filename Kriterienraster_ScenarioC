@@ -1,0 +1,42 @@
+Kriterium
+Gewichtung
+Vorlage
+Must have
+Commits werden von der lokalen Entwicklungsumgebung automatisiert in die 
+Testumgebung (Continuous Integration / CI) gebracht 3
+Mindestens ein Unit-Test wird in der CI-Umgebung automatisiert ausgeführt 3
+Sie haben eines der im Unterricht vorgestellten oder im Modul erarbeiteten 
+Diagramme für Ihr Projekt nach UML- oder DIN-Standards umgesetzt. 3
+Es stehen verschiedene Kategorien von Quizfragen zur Auswahl und am Ende des Spiels 
+wird eine Rangliste angezeigt. 3
+Es werden mehrere sinnvolle Funktionen/Methoden definiert. 3
+Das Spiel ist komplett auf der Konsole spielbar. 3
+Es gibt eine Hilfe zur Steuerung, welche mit dem Parameter "h" aufgerufen werden 
+kann. 3
+Sie haben das Programm lesbar und verständlich gestaltet, insbesondere durch 
+aussagekräftige Namen der Variablen und Funktionen. 3
+Should have
+Die Pipeline enthält ein automatisiertes Linting zur Qualitätsicherung (in Ergänzung zum 
+automatisierten Testing). (Für ITSE nicht erforderlich.) 1
+Es werden mindestens drei sinvolle Unit-Tests und ein Integrationstest automatisiert 
+ausgeführt.  (Integrationstest für ITSE und FISI nicht erforderlich.) 1
+Die Daten werden über eine GUI/Website visualisiert.  (Wer eine GUI baut, braucht 
+keine Ausgabe auf der Konsole (maximal um zusätzliche Punkte zu sammeln)) 1
+Die Accountdaten der User, die Fragen und/oder Kategorien sind in einer Datenbank 
+gespeichert. (Fragen könnten alternativ über eine REST-API übernommen werden). 1
+Jeder Spieler hat seinen eigenen Account. 1
+Eine Rangliste ist jederzeit einsehbar 1
+Die Software ist objektorientiert aufgebaut und in sinnvolle module / Klassen 
+strukturiert. (ITSE und FISI: Aufteilung auf mehrere Module, aber keine stringente 
+Objektorientierung gefordert.) 1
+Could have (nur zwei gehen in die Gewichtung mit ein)
+Ein Commit wird von der lokalen Entwickungsumgebung automatisiert in die 
+Produktivumgebung (Continous Deployment) gebracht. 2
+Sie Implementieren die Möglichkeit über ein Backend die Quizfragen zu verwalten 
+(hinzufügen, entfernen, bearbeiten). 2
+Sie haben einen Mehrspielermodus implementiert.
+Sie haben ein eigenes Achievment-System implementiert
+Fachgespräch
+Alle sind am Gespräch beteiligt. 3
+Alle können auf Fragen zum Quellcode antworten. 3
+Fragen im Kontext OOP können beantwortet werden. 1

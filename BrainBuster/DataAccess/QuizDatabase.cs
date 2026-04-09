@@ -110,7 +110,9 @@ public List<Question> LoadQuestions(List<string>? categoryFilters = null)
         }
     }
 
-    return new List<Question>(questions.Values);
+    var result = new List<Question>(questions.Values);
+    Console.WriteLine($"[QuizDatabase] Loaded {result.Count} questions from DB (after filtering).");
+    return result;
 }
 
     public Player GetOrCreatePlayer(string name)
