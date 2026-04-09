@@ -84,8 +84,8 @@ public class QuizApp
 
             session.AdvanceTurn();
         }
-
-        _ui.ShowSummary(_activePlayers);
+        
+        Summarize();
     }
     private void ManagePlayers()
     {
@@ -93,58 +93,20 @@ public class QuizApp
         var selection = _ui.PlayerSelection(_maxPlayers);
         foreach (var name in selection)
         {
-<<<<<<< HEAD
-            string name = _ui.PromptText($"Name für Spieler {i+1}: ");
-            if (!name.IsWhiteSpace())
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                _activePlayers.Add(_db.GetOrCreatePlayer(name));
+                var player = _db.GetOrCreatePlayer(name);
+                _activePlayers.Add(player);
             }
         }
-        _ui.ShowMessage("====== Alle Spieler ======");
-        for (int i = 0; i < _activePlayers.Count; i++)
-        {
-            _ui.ShowMessage(_activePlayers[i].Name);
-        }
     }
-    private void ShowLeaderboard()
+    private void Summarize()
     {
-        List<Player> topPlayers = _db.GetTopPlayers(10);
-        if (topPlayers == null)
+        _ui.ShowSummary(_activePlayers);
+        foreach (var player in _activePlayers)
         {
-            _ui.ShowError("Keine Spieler in der Bestenliste!\nMöglicherweise gibt es noch keine Spieler?");
-            return;
-        }
-
-        _ui.ShowMessage($"Besten {topPlayers.Count} Spieler:");
-        for (int i = 0; i < topPlayers.Count; i++)
-        {
-            _ui.ShowMessage($"{i+1}. {topPlayers[i].Name} - {topPlayers[i].HighScore} Punkte ");
-        }
-        string input = string.Empty;
-        while (input != "q")
-        {
-            input = _ui.PromptText("\nQ - Zurück zum Hauptmenü\n");
-        }
-    }
-    private void ShowSummary()
-    {
-        _ui.ShowMessage("====== Ergebnis ======");
-
-        var tmp = _activePlayers.OrderByDescending(x => x.Score).ToList();
-        for (int i = 0; i < tmp.Count; i++)
-        {
-            _db.UpdateHighScore(tmp[i]);
-            _ui.ShowMessage($"{i+1}. {tmp[i].Name} - {tmp[i].Score} Punkte");
-        }
-        _ui.ShowMessage("======================");
-        string input = string.Empty;
-        while (input != "q")
-        {
-            input = _ui.PromptText("\nQ - Zurück zum Hauptmenü\n");
-=======
-            var player = _db.GetOrCreatePlayer(name);
-            _activePlayers.Add(player);
->>>>>>> d0b1b41 (added things)
+            _db.UpdateHighScore(player);
+            player.Score = 0; // Reset Score for next round
         }
     }
     private static void Shuffle<T>(IList<T> list)

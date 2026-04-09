@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-using System.ComponentModel;
-using System.Reflection.Metadata;
-using Microsoft.VisualBasic;
-=======
 using BrainBusters.Models;
->>>>>>> d0b1b41 (added things)
 
 namespace BrainBusters.UI;
 
