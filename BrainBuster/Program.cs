@@ -7,7 +7,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        var tmp = TryParseArguments(args)
+        var tmp = TryParseArguments(args);
     }
 
     static bool TryParseArguments(string[] args)
