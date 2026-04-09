@@ -46,8 +46,9 @@ public class QuizApp
             return;
         }
 
-        // Hier kommt deine ChooseCategories()-Logik rein, dann:
-        var questions = _db.LoadQuestions(null); // Kategorien übergeben
+        var categories = _db.GetCategories();
+        var selectedCategories = _ui.AskPlayerCategories(categories);
+        var questions = _db.LoadQuestions(selectedCategories);
         Shuffle(questions);
         // Mischen der Fragen...
         
@@ -93,7 +94,7 @@ public class QuizApp
 
         for (int i = 0; i < choice; i++)
         {
-            string name = _ui.PromptText($"Name für Spieler {i}:");
+            string name = _ui.PromptText($"Name für Spieler {i+1}: ");
             if (!name.IsWhiteSpace())
             {
                 _activePlayers.Add(_db.GetOrCreatePlayer(name));
@@ -132,6 +133,7 @@ public class QuizApp
         var tmp = _activePlayers.OrderByDescending(x => x.Score).ToList();
         for (int i = 0; i < tmp.Count; i++)
         {
+            _db.UpdateHighScore(tmp[i]);
             _ui.ShowMessage($"{i+1}. {tmp[i].Name} - {tmp[i].Score} Punkte");
         }
         _ui.ShowMessage("======================");
