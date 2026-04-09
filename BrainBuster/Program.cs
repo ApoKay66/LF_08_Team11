@@ -7,15 +7,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        using var db = new QuizDatabase(AppConfig.DbPath);
-        QuizApp Quiz = new QuizApp(db);
-
-        Quiz.Run();
+        var tmp = TryParseArguments(args)
     }
 
-    static bool TryParseArguments(string[] args, out (bool StartServer, bool ShowLeaderboard, int Rounds) config)
+    static bool TryParseArguments(string[] args)
     {
-        config = (false, false, 5);
 
         for (int i = 0; i < args.Length; i++)
         {
@@ -25,11 +21,13 @@ class Program
                     ShowHelp();
                     return false;
                 case "-s":
-                    config.StartServer = true;
                     break;
                 default:
-                    Console.WriteLine($"Fehler: Unbekanntes Argument {args[i]}");
-                    return false;
+                var db = new QuizDatabase(AppConfig.DbPath);
+                QuizApp Quiz = new QuizApp(db);
+
+                Quiz.Run();
+                return false;
             }
         }
         return true;
