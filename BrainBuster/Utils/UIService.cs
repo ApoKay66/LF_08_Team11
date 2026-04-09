@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 using System.ComponentModel;
 using System.Reflection.Metadata;
 using Microsoft.VisualBasic;
+=======
+using BrainBusters.Models;
+>>>>>>> d0b1b41 (added things)
 
 namespace BrainBusters.UI;
 
@@ -19,6 +23,40 @@ public class ConsoleService
             }
 
             ShowError("Ungültige Eingabe, bitte eine gültige Zahl eingeben.");
+        }
+    }
+    public List<string> PlayerSelection(int maxPlayers)
+    {
+        var players = new List<string>();
+        int choice = PromptNumber("Wie viele Spieler werden Spielen?", 1, maxPlayers);
+
+        for (int i = 0; i < choice; i++)
+        {
+            string name = PromptText($"Name für Spieler {i+1}: ");
+            if (!name.IsWhiteSpace())
+            {
+                players.Add(name);
+            }
+        }
+        return players;
+    }
+    public void ShowLeaderboard(List<Player> topPlayers)
+    {
+        if (topPlayers == null)
+        {
+            ShowError("Keine Spieler in der Bestenliste!\nMöglicherweise gibt es noch keine Spieler?");
+            return;
+        }
+
+        ShowMessage($"Besten {topPlayers.Count} Spieler:");
+        for (int i = 0; i < topPlayers.Count; i++)
+        {
+            ShowMessage($"{i+1}. {topPlayers[i].Name} - {topPlayers[i].HighScore} Punkte ");
+        }
+        string input = string.Empty;
+        while (input != "q")
+        {
+            input = PromptText("\nQ - Zurück zum Hauptmenü\n");
         }
     }
 
@@ -63,6 +101,23 @@ public class ConsoleService
     {
         Console.Write(prompt);
         return Console.ReadLine() ?? string.Empty;
+    }
+
+    public void ShowSummary(List<Player> players)
+    {
+        ShowMessage("====== Ergebnis ======");
+
+        var tmp = players.OrderByDescending(x => x.Score).ToList();
+        for (int i = 0; i < tmp.Count; i++)
+        {
+            ShowMessage($"{i+1}. {tmp[i].Name} - {tmp[i].Score} Punkte");
+        }
+        ShowMessage("======================");
+        string input = string.Empty;
+        while (input != "q")
+        {
+            input = PromptText("\nQ - Zurück zum Hauptmenü\n");
+        }
     }
 
     public void ShowMessage(string message) => Console.WriteLine(message);

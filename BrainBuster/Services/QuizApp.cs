@@ -11,7 +11,7 @@ public class QuizApp
     private readonly ConsoleService _ui;
     private List<Player> _activePlayers = new();
     private readonly int _roundsPerGame;
-    private readonly int _maxPlayers = 4; 
+    private readonly int _maxPlayers = 4;
 
     public QuizApp(QuizDatabase db, int rounds = 1)
     {
@@ -32,7 +32,7 @@ public class QuizApp
             {
                 case 1: StartNewGame(); break;
                 case 2: ManagePlayers(); break;
-                case 3: ShowLeaderboard(); break;
+                case 3: _ui.ShowLeaderboard(_db.GetTopPlayers(10)); break;
                 case 4: return;
             }
         }
@@ -85,15 +85,15 @@ public class QuizApp
             session.AdvanceTurn();
         }
 
-        ShowSummary();
+        _ui.ShowSummary(_activePlayers);
     }
     private void ManagePlayers()
     {
         _activePlayers.Clear();
-        int choice = _ui.PromptNumber("Wie viele Spieler werden Spielen?", 1, _maxPlayers);
-
-        for (int i = 0; i < choice; i++)
+        var selection = _ui.PlayerSelection(_maxPlayers);
+        foreach (var name in selection)
         {
+<<<<<<< HEAD
             string name = _ui.PromptText($"Name für Spieler {i+1}: ");
             if (!name.IsWhiteSpace())
             {
@@ -141,6 +141,10 @@ public class QuizApp
         while (input != "q")
         {
             input = _ui.PromptText("\nQ - Zurück zum Hauptmenü\n");
+=======
+            var player = _db.GetOrCreatePlayer(name);
+            _activePlayers.Add(player);
+>>>>>>> d0b1b41 (added things)
         }
     }
     private static void Shuffle<T>(IList<T> list)
@@ -160,7 +164,7 @@ public class QuizApp
 
         var wrongAnswers = question.Answers
             .Where(x => !x.IsCorrect)
-            .OrderBy(x => rng.Next()) // acceptable here for small sets
+            .OrderBy(x => rng.Next())
             .Take(3)
             .ToList();
 
@@ -173,5 +177,4 @@ public class QuizApp
 
         return result;
     }
-    // PrepareAnswers, ManagePlayers, ShowSummary und ShowLeaderboard implementieren...
 }
