@@ -61,24 +61,28 @@ public class UnitTests
         Assert.Null(question);
     }
     [Fact]
-    public void GetNextQuestion_ShouldReturnAndRemoveQuestion()
+    public void GetNextQuestion_ShouldDequeueQuestions_ForCurrentPlayer()
     {
         // ARRANGE
-        var players = new List<Player> { new Player { Name = "Player1" } };
+        var player = new Player { Name = "Player1" };
+        var players = new List<Player> { player };
+
         var question1 = new Question { Id = 1, QuestionText = "Frage 1" };
         var question2 = new Question { Id = 2, QuestionText = "Frage 2" };
+
         var questions = new List<Question> { question1, question2 };
+
         var gameSession = new GameSession(players, questions, roundsTotal: 3);
 
         // ACT
-        var firstQuestion = gameSession.GetNextQuestion();
-        var secondQuestion = gameSession.GetNextQuestion();
-        var noMoreQuestions = gameSession.GetNextQuestion();
+        var first = gameSession.GetNextQuestion();
+        var second = gameSession.GetNextQuestion();
+        var third = gameSession.GetNextQuestion();
 
         // ASSERT
-        Assert.Equal(question1.Id, firstQuestion?.Id);
-        Assert.Equal(question2.Id, secondQuestion?.Id);
-        Assert.Null(noMoreQuestions); // Alle Fragen sollten verbraucht sein
+        Assert.Equal(1, first?.Id);
+        Assert.Equal(2, second?.Id);
+        Assert.Null(third); // queue should be empty now
     }
     [Fact]
     public void EvaluateAnswer_ShouldIncreaseScoreForCorrectAnswer()
